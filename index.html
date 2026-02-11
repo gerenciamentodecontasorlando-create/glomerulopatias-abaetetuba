@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Glomerulopatias • estudo técnico para provas</title>
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <!-- Chart.js para gráfico variado -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(145deg, #f6f9fc 0%, #edf2f7 100%);
+      color: #0a1e2f;
+      padding: 32px 20px;
+      line-height: 1.6;
+    }
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      background: rgba(255,255,255,0.75);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 48px 48px 40px 40px;
+      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.2);
+      padding: 40px 35px;
+      border: 1px solid rgba(255,255,255,0.5);
+    }
+    h1 {
+      font-size: 2.8rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #0b3b5c;
+      border-bottom: 4px solid #3a86ff;
+      padding-bottom: 20px;
+    }
+    h1 i {
+      color: #ff9e00;
+      text-shadow: 0 0 8px #ffb347;
+    }
+    .sub {
+      font-size: 1.2rem;
+      font-weight: 500;
+      color: #2c3e50;
+      margin-bottom: 40px;
+      background: #d0e6ff;
+      padding: 16px 24px;
+      border-radius: 60px;
+      display: inline-block;
+      backdrop-filter: blur(4px);
+    }
+    .grid-graph {
+      display: grid;
+      grid-template-columns: 1.1fr 1.9fr;
+      gap: 30px;
+      margin-bottom: 50px;
+      align-items: center;
+    }
+    .chart-card {
+      background: #0a1f2e;
+      border-radius: 32px;
+      padding: 25px 20px;
+      box-shadow: 0 20px 30px -10px rgba(0,50,80,0.5);
+      border: 1px solid #3080b0;
+    }
+    .chart-card canvas {
+      background: transparent;
+      max-height: 260px;
+    }
+    .legend-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      background: rgba(255,255,255,0.7);
+      backdrop-filter: blur(4px);
+      padding: 25px;
+      border-radius: 28px;
+      box-shadow: inset 0 1px 4px rgba(0,0,0,0.02);
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 600;
+    }
+    .color-dot {
+      width: 20px;
+      height: 20px;
+      border-radius: 8px;
+    }
+    .section-title {
+      font-size: 1.9rem;
+      font-weight: 700;
+      margin: 50px 0 20px 0;
+      padding-left: 18px;
+      border-left: 12px solid #ff006e;
+      color: #1d3557;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .accordion-block {
+      background: white;
+      border-radius: 28px;
+      padding: 28px 32px;
+      margin-bottom: 30px;
+      box-shadow: 0 8px 20px rgba(0,20,50,0.08);
+      border: 1px solid rgba(58,134,255,0.2);
+      transition: all 0.2s;
+    }
+    .pill {
+      background: #3a86ff;
+      color: white;
+      border-radius: 50px;
+      padding: 8px 20px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      display: inline-block;
+      margin-bottom: 15px;
+      letter-spacing: 0.5px;
+    }
+    .two-cols {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+    }
+    .table-responsive {
+      overflow-x: auto;
+      margin: 30px 0;
+      border-radius: 20px;
+      background: #001d3d;
+      color: white;
+      box-shadow: 0 12px 25px rgba(0,0,0,0.2);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+    }
+    th {
+      background: #003566;
+      color: white;
+      font-weight: 600;
+      padding: 16px 8px;
+    }
+    td {
+      padding: 14px 8px;
+      border-bottom: 1px solid #2a5a7a;
+      color: #f0f9ff;
+    }
+    tr:last-child td {
+      border-bottom: none;
+    }
+    .tratamento-card {
+      background: linear-gradient(105deg, #fef9e7, #fff9f0);
+      border-radius: 24px;
+      padding: 22px;
+      margin-top: 15px;
+      border-left: 12px solid #00b4d8;
+    }
+    .casos-area {
+      background: #0b2b40;
+      border-radius: 40px 40px 0 0;
+      padding: 40px 30px;
+      color: white;
+      margin-top: 50px;
+    }
+    .caso-item {
+      background: #163a4f;
+      border-radius: 28px;
+      padding: 28px;
+      margin-bottom: 25px;
+      color: #f1f9ff;
+      box-shadow: 0 8px 0 #0a1c26;
+      border: 1px solid #53b9e0;
+    }
+    .btn-resposta {
+      background: #ffb703;
+      border: none;
+      color: #0a1e2f;
+      font-weight: 700;
+      padding: 10px 28px;
+      border-radius: 40px;
+      margin-top: 18px;
+      cursor: pointer;
+      transition: 0.2s;
+      font-size: 1rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      border: 1px solid #fb8500;
+    }
+    .btn-resposta:hover {
+      background: #ff9e00;
+      transform: scale(1.02);
+      box-shadow: 0 0 15px #ffb347;
+    }
+    .resposta-text {
+      background: #1f4e6a;
+      padding: 18px 24px;
+      border-radius: 20px;
+      margin-top: 20px;
+      font-weight: 500;
+      border-left: 8px solid #ffb703;
+      display: none;
+    }
+    .resposta-text.show {
+      display: block;
+    }
+    .badge {
+      background: #ff006e;
+      color: white;
+      border-radius: 100px;
+      padding: 5px 18px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    i {
+      margin-right: 8px;
+      color: inherit;
+    }
+    @media (max-width: 1000px) {
+      .grid-graph { grid-template-columns: 1fr; }
+      .two-cols { grid-template-columns: 1fr; }
+      h1 { font-size: 2rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <!-- TÍTULO -->
+  <h1>
+    <i class="fas fa-kidneys"></i> GLOMERULOPATIAS
+    <span style="font-size: 1.2rem; background: #1e6091; color: white; border-radius: 60px; padding: 6px 22px; margin-left: 16px;">ESTRATÉGIA PROVAS • ENAMED</span>
+  </h1>
+  <div class="sub">
+    <i class="fas fa-trap"></i> Pegadinhas anátomo-clínicas • fluxo real UPA / hospital • 10 casos nível médio/difícil
+  </div>
+
+  <!-- GRÁFICO VARIADO (cores fortes) -->
+  <div class="grid-graph">
+    <div class="chart-card">
+      <canvas id="glomeChart" width="400" height="250"></canvas>
+    </div>
+    <div class="legend-grid">
+      <h3 style="font-size:1.8rem; font-weight:700; color:#003566; margin-bottom: 8px;"><i class="fas fa-chart-pie"></i> Frequência em provas</h3>
+      <div class="legend-item"><span class="color-dot" style="background:#e63946;"></span> Sd. Nefrítica / pós-estrepto</div>
+      <div class="legend-item"><span class="color-dot" style="background:#3a86ff;"></span> Nefrite lúpica (classes)</div>
+      <div class="legend-item"><span class="color-dot" style="background:#ff9e00;"></span> RPG / ANCA / Goodpasture</div>
+      <div class="legend-item"><span class="color-dot" style="background:#8338ec;"></span> Nefropatia membranosa</div>
+      <div class="legend-item"><span class="color-dot" style="background:#2a9d8f;"></span> Lesão mínima / GESF</div>
+      <div class="legend-item"><span class="color-dot" style="background:#fb8500;"></span> IgA / doença da membrana fina</div>
+      <div style="margin-top: 20px; background: #ccdbfd; padding: 18px; border-radius: 20px; color: #003049;">
+        <i class="fas fa-stethoscope"></i> <strong>Pegada mestra:</strong> proteinúria NÃO ocorre por lesão isolada do endotélio — MBG + podócito!
+      </div>
+    </div>
+  </div>
+
+  <!-- 1. ANATOMIA + 2. FISIOPATOLOGIA (junto) -->
+  <div class="two-cols" style="margin-top: 20px;">
+    <div class="accordion-block">
+      <span class="pill"><i class="fas fa-scalpel"></i> 1. ANATOMIA (pegadinha)</span>
+      <p style="font-size:1.2rem; font-weight: 600;">Endotélio fenestrado → MBG (carga negativa) → Podócitos (diafragma de fenda).</p>
+      <p style="background: #e7f0ff; padding: 18px; border-radius: 18px; margin-top: 15px; border-left: 6px solid #00509e;">
+        <i class="fas fa-exclamation-triangle" style="color:#d62828;"></i> <strong>Pegadinha clássica:</strong> "Proteinúria por lesão endotelial isolada" — <span style="background:#ffc2c2; padding:3px 12px; border-radius:30px;">FALSO</span>. Quem segura é a MBG e fenda podocitária.
+      </p>
+      <p><i class="fas fa-microscope"></i> Células mesangiais: fagocitose, suporte.</p>
+    </div>
+    <div class="accordion-block">
+      <span class="pill" style="background: #9c89b8;"><i class="fas fa-dna"></i> 2. FISIOPATOLOGIA (IF)</span>
+      <ul style="list-style: none; padding: 0;">
+        <li style="margin-bottom: 14px;"><span style="background: #3a86ff; color:white; border-radius: 50%; padding: 2px 10px;">•</span> <strong>Imunocomplexos circ.</strong> → granular (pós-estrepto, LES)</li>
+        <li style="margin-bottom: 14px;"><span style="background: #ff9e00; color:black; border-radius: 50%; padding: 2px 10px;">•</span> <strong>Anti-MBG</strong> → linear (Goodpasture)</li>
+        <li style="margin-bottom: 14px;"><span style="background: #8338ec; color:white; border-radius: 50%; padding: 2px 10px;">•</span> <strong>Imunocomplexos in situ</strong> → membranosa (anti-PLA2R)</li>
+        <li style="margin-bottom: 14px;"><span style="background: #2a9d8f; color:white; border-radius: 50%; padding: 2px 10px;">•</span> <strong>C3 isolado</strong> → glomerulopatia C3</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 3. MANIFESTAÇÃO CLÍNICA + 4. CONDUTA -->
+  <div class="two-cols">
+    <div class="accordion-block">
+      <span class="pill" style="background: #e36414;"><i class="fas fa-notes-medical"></i> 3. SÍNDROMES (padrão ouro)</span>
+      <p><strong>Sd. Nefrítica:</strong> hematúria dismórfica + HÁ + edema + oligúria (pós-estrepto, LES, IgA).</p>
+      <p><strong>Sd. Nefrótica:</strong> proteinúria >3,5g/dia + hipoalbuminemia + edema + dislipidemia.</p>
+      <p><strong>RPG:</strong> perda rápida (semanas) + crescentes. Tipo I (Goodpasture), II (LES/IgA), III (ANCA).</p>
+      <p><strong>Hematúria isolada:</strong> IgA, doença membrana fina.</p>
+    </div>
+    <div class="accordion-block">
+      <span class="pill" style="background: #0f4c5c;"><i class="fas fa-stethoscope"></i> 4. CONDUTA (UPA/HOSP)</span>
+      <p><i class="fas fa-flask"></i> <strong>Exames iniciais:</strong> Urina 1 (cilindros hemáticos), relação P/C, creatinina, albumina, C3/C4, FAN, ANCA, anti-MBG, ASLO.</p>
+      <p><i class="fas fa-exclamation-circle"></i> <strong>Biópsia renal:</strong> proteinúria nefrótica sem causa óbvia, perda rápida, hematúria + proteinúria >1g/dia.</p>
+      <div style="background:#0d3b4c; color: white; padding: 16px; border-radius: 16px; margin-top: 12px;">
+        <i class="fas fa-trap"></i> Pós-estreptocócica NÃO leva corticoide — só suporte + penicilina benzatina IM (foco).
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. TRATAMENTO DETALHADO (VIA ORAL / INJETÁVEL, CENÁRIOS) -->
+  <div class="section-title"><i class="fas fa-syringe"></i> 5. TRATAMENTO — consultório / UPA / hospital</div>
+  <div class="tratamento-card">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 30px;">
+      <div>
+        <h3 style="color: #005f73; display: flex; gap: 10px;"><i class="fas fa-clinic-medical"></i> AMBULATÓRIO / CONSULTÓRIO</h3>
+        <p><span class="badge" style="background: #0a9396;">ORAL</span> <strong>Prednisona 1mg/kg/dia</strong> — lesão mínima, membranosa inicial, LES leve.</p>
+        <p><span class="badge" style="background: #94d2bd;">ORAL</span> <strong>Micofenolato / Ciclofosfamida oral</strong> — manutenção LES, vasculites.</p>
+        <p><span class="badge" style="background: #e9d8a6;">ORAL</span> <strong>IECA / BRA</strong> — proteinúria, HAS (toda glomerulopatia crônica).</p>
+        <p><span class="badge" style="background: #ca6702;">IM</span> <strong>Penicilina benzatina</strong> — pós-estreptocócica (foco).</p>
+      </div>
+      <div>
+        <h3 style="color: #ae2012; display: flex; gap: 10px;"><i class="fas fa-ambulance"></i> UPA / HOSPITAL (internação)</h3>
+        <p><span class="badge" style="background: #9d0208;">IV</span> <strong>Metilprednisolona pulsoterapia</strong> 500mg-1g/dia 3d – RPG lúpica, ANCA, Goodpasture.</p>
+        <p><span class="badge" style="background: #6a040f;">IV</span> <strong>Ciclofosfamida pulsoterapia mensal</strong> — hospital dia, poupa corticoide.</p>
+        <p><span class="badge" style="background: #370617;">IV</span> <strong>Albumina + furosemida</strong> — edema refratário (nefrótica).</p>
+        <p><span class="badge" style="background: #03071e;">PLASMAFÉRESE</span> Goodpasture, ANCA c/ hemorragia pulmonar.</p>
+      </div>
+    </div>
+    <p style="margin-top: 20px; background: #fff3cd; padding: 16px; border-radius: 20px; border-left: 10px solid #ff9500;">
+      <i class="fas fa-stethoscope"></i> <strong>PEGADINHA:</strong> GNPE com creatinina 2,5 → NUNCA usar corticoide. Apenas controle pressórico, diurético e penicilina IM.
+    </p>
+  </div>
+
+  <!-- 6. QUADRO COMPARATIVO GLOMERULOPATIAS -->
+  <div class="section-title"><i class="fas fa-table"></i> 6. TIPOS • IMUNOFLUORESCÊNCIA • CLÍNICA • TRATAMENTO ALVO</div>
+  <div class="table-responsive">
+    <table>
+      <thead><tr><th>Doença</th><th>Imunofluorescência</th><th>Clínica</th><th>Complemento</th><th>Tratamento alvo</th></tr></thead>
+      <tbody>
+        <tr><td>Lesão mínima</td><td>Negativa (ou IgM inespec.)</td><td>Nefrótica pura</td><td>Normal</td><td>Corticoide, ciclosporina</td></tr>
+        <tr><td>GESF</td><td>Negativa</td><td>Nefrótica + HAS</td><td>Normal</td><td>Corticoide prolongado, inibidores calcineurina</td></tr>
+        <tr><td>Membranosa</td><td>Granular IgG, C3</td><td>Nefrótica</td><td>Normal</td><td>Anti-PLA2R, inib. calcineurina, ciclofosfamida</td></tr>
+        <tr><td>Pós-estreptocócica</td><td>Granular "starry sky"</td><td>Nefrítica</td><td>Baixo (C3)</td><td>Suporte, penicilina benzatina</td></tr>
+        <tr><td>IgA</td><td>Mesangial granular IgA</td><td>Hematúria macroscópica</td><td>Normal</td><td>IECA, corticoide se proteinúria >1g</td></tr>
+        <tr><td>LES classe IV</td><td>Full house (IgG, IgM, IgA, C3, C1q)</td><td>Nefrítica/Nefrótica</td><td>Baixo (C3/C4)</td><td>Micofenolato, Ciclofosfamida</td></tr>
+        <tr><td>Goodpasture</td><td>Linear IgG</td><td>RPG + hemorragia</td><td>Normal</td><td>Plasmaférese + corticoide + ciclofosfamida</td></tr>
+        <tr><td>ANCA pauci-imune</td><td>Poucos/nenhum depósito</td><td>RPG, sistêmico</td><td>Normal</td><td>Corticoide + ciclofosfamida/rituximabe</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- =========== 7. 10 CASOS CLÍNICOS ========== -->
+  <div class="casos-area">
+    <span style="font-size: 2.5rem; font-weight: 800; display: block; margin-bottom: 10px;"><i class="fas fa-file-alt"></i> 10 CASOS CLÍNICOS · NÍVEL MÉDIO/DIFÍCIL</span>
+    <p style="margin-bottom: 40px; color: #b0e6ff;">Clique no botão para ver a resposta comentada. Alternativas variadas, foco em pegadinhas.</p>
+
+    <!-- caso 1 -->
+    <div class="caso-item" id="caso1">
+      <div style="display: flex; justify-content: space-between;"><span style="background: #ffb703; color:#000; padding: 6px 20px; border-radius: 30px; font-weight: 800;">CASO 1</span><span style="color: #a2d2ff;">Homem, 30a</span></div>
+      <p style="font-size: 1.2rem; margin: 20px 0;">Hematúria macroscópica há 1 dia, quadro gripal há 5 dias. PA 130x80, creat 1,0, relação P/C 0,2. Urina 1: hematúria dismórfica +++.</p>
+      <p style="background: #1f4e6a; padding: 12px; border-radius: 16px;"><strong>Qual a conduta mais adequada?</strong><br>a) Pulsoterapia com metilprednisolona  b) Biópsia renal  c) Penicilina Benzatina  d) IECA e observar evolução  e) Ciclofosfamida oral</p>
+      <button class="btn-resposta" onclick="toggleResposta('resp1')"><i class="fas fa-comment-dots"></i> Ver resposta</button>
+      <div id="resp1" class="resposta-text"><strong>Resposta: D</strong> — IgA nefrite clássica (hematúria 1-2d pós-infecção). Função normal, proteinúria subnefrótica: IECA + observação. Biópsia não indicada.</div>
+    </div>
+
+    <div class="caso-item" id="caso2">
+      <span style="background: #ffb703; color:#000; padding: 6px 20px; border-radius: 30px; font-weight: 800;">CASO 2</span>
+      <p style="margin: 20px 0;">Mulher, 22a, edemas. PA 150x100, creat 2,1, proteinúria 5,6g/24h, C3/C4 baixo, FAN 1:640. Urina: hematúria dismórfica + cilindros hemáticos.</p>
+      <p><strong>Qual a classe mais provável na biópsia?</strong><br>a) II  b) III  c) IV  d) V  e) VI</p>
+      <button class="btn-resposta" onclick="toggleResposta('resp2')"><i class="fas fa-comment-dots"></i> Ver resposta</button>
+      <div id="resp2" class="resposta-text"><strong>Resposta: C</strong> — Nefrite lúpica proliferativa difusa = classe IV. C3/C4 baixo, hematúria, HAS, FAN+.</div>
+    </div>
+
+    <div class="caso-item" id="caso3">
+      <span style="background: #ffb703; color:#000; padding: 6px 20px; border-radius: 30px; font-weight: 800;">CASO 3</span>
+      <p style="margin:20px 0">Homem, 48a, nefrótica 4 meses. Proteinúria 8g/d, creat 1,3. Anti-PLA2R positivo. C3 normal, FAN negativo.</p>
+      <p><strong>Melhor tratamento inicial?</strong><br>a) Prednisona 1mg/kg/dia b) Ciclofosfamida oral c) Inibidor de calcineurina d) Pulsoterapia metilprednisolona e) Plasmaférese</p>
+      <button class="btn-resposta" onclick="toggleResposta('resp3')"><i class="fas fa-comment-dots"></i> Ver resposta</button>
+      <div id="resp3" class="resposta-text"><strong>Resposta: A</strong> — Nefropatia membranosa anti-PLA2R+. Inicial = corticoide. Inibidores de calcineurina: 2ª linha.</div>
+    </div>
+
+    <div class="caso-item" id="caso4">
+      <span style="background: #ffb703; color:#000; padding: 6px 20px; border-radius: 30px; font-weight: 800;">CASO 4</span>
+      <p style="margin:20px 0">Criança 7a, anasarca. Proteinúria 4g/dia, creat 0,5, albumina 1,8, sem hematúria, complemento normal.</p>
+      <p><strong>Biópsia renal mostra?</strong><br>a) Granular IgG b) IF negativa c) Linear IgG d) C3 isolado e) Depósito mesangial de IgA</p>
+      <button class="btn-resposta" onclick="toggleResposta('resp4')"><i class="fas fa-comment-dots"></i> Ver resposta</button>
+      <div id="resp4" class="resposta-text"><strong>Resposta: B</strong> — Doença de Lesões Mínimas: IF negativa. Criança, nefrótica pura.</div>
+    </div>
+
+    <div class="caso-item" id="caso5">
+      <span style="background: #ffb703; color:#000; padding: 6px 20px; border-radius: 30px; font-weight: 800;">CASO 5</span>
+      <p style="margin:20px 0">Homem 60a, perda rápida renal (creat 3,8 em 3 sem). Urina: hematúria, proteinúria 1,2g/d. ANCA + (c-ANCA/PR3).</p>
+      <p><strong>Tríade terapêutica indicada?</strong><br>a) Corticoide oral, IECA, diurético b) Metilprednisolona IV, ciclofosfamida, plasmaférese c) Prednisona isolada d) Micofenolato oral e) Apenas plasmaférese</p>
+      <button class="btn-resposta" onclick="toggleResposta('resp5')"><i class="fas fa-comment-dots"></i> Ver resposta</button>
+      <div id="resp5" class="resposta-text"><strong>Resposta: B</strong> — RPG tipo III (ANCA). Pulsoterapia + ciclofosfamida + plasmaférese (perda rápida grave).</div>
+    </div>
+
+    <div class="caso-item" id="caso6">
+      <span style="background: #ffb703; color:#000; padding: 6px 20px; border-radius: 30px; font-weight: 800;">CASO 6</span>
+      <p style="margin:20px 0">Homem, 24a, hematúria microscópica 2 anos, proteinúria 0,4g/d, PA normal, função normal. Mãe com hematúria.</p>
+      <p><strong>Hipótese principal?</strong><br>a) Doença de Berger b) Doença da membrana basal fina c) GN pós-estrepto d) Nefropatia membranosa e) Síndrome de Alport</p>
+      <button class="btn-resposta" onclick="toggleResposta('resp6')"><i class="fas fa-comment-dots"></i> Ver resposta</button>
+      <div id="resp6" class="resposta-text"><strong>Resposta: B</strong> — Hematúria familiar benigna, sem proteinúria progressiva = doença da membrana basal fina. Alport teria perda auditiva e proteinúria.</div>
+    </div>
+
+    <div class="caso-item" id="caso7">
+      <span style="background: #ffb703; color:#000; padding: 6px 20px; border-radius: 30px; font-weight: 800;">CASO 7</span>
+      <p style="margin:20px 0">Mulher 55a, edema, HAS, proteinúria 4,5g/d, creat 1,1. Biópsia: espessamento MBG, spikes prata metenamina.</p>
+      <p><strong>IF esperada?</strong><br>a) Linear IgG b) Granular IgG + C3 difuso c) IgA mesangial d) Negativo e) C3 isolado</p>
+      <button class="btn-resposta" onclick="toggleResposta('resp7')"><i class="fas fa-comment-dots"></i> Ver resposta</button>
+      <div id="resp7" class="resposta-text"><strong>Resposta: B</strong> — Nefropatia membranosa: spikes; imunofluorescência: IgG + C3 granular difuso.</div>
+    </div>
+
+    <div class="caso-item" id="caso8">
+      <span style="background: #ffb703; color:#000; padding: 6px 20px; border-radius: 30px; font-weight: 800;">CASO 8</span>
+      <p style="margin:20px 0">Homem 18a, 10d pós-amigdalite: hematúria, edema palpebral, PA 150x100, creat 1,8, C3 25, ASLO elevado.</p>
+      <p><strong>Conduta?</strong><br>a) Metilprednisolona 1g/dia b) Penicilina benzatina + restrição hídrica c) Ciclofosfamida d) Plasmaférese e) Prednisona 60mg/d</p>
+      <button class="btn-resposta" onclick="toggleResposta('resp8')"><i class="fas fa-comment-dots"></i> Ver resposta</button>
+      <div id="resp8" class="resposta-text"><strong>Resposta: B</strong> — GNPE clássica: suporte + penicilina para erradicar foco. Corticoide não tem papel.</div>
+    </div>
+
+    <div class="caso-item" id="caso9">
+      <span style="background: #ffb703; color:#000; padding: 6px 20px; border-radius: 30px; font-weight: 800;">CASO 9</span>
+      <p style="margin:20px 0">Mulher 35a, LES há 5a. Proteinúria 2,8g/dia, creat 0,9, sedimento inativo. Biópsia: Classe V pura.</p>
+      <p><strong>Tratamento inicial preferencial?</strong><br>a) Pulsoterapia ciclofosfamida b) Micofenolato mofetil c) Inibidor calcineurina d) Prednisona alta dose e) IECA isolado</p>
+      <button class="btn-resposta" onclick="toggleResposta('resp9')"><i class="fas fa-comment-dots"></i> Ver resposta</button>
+      <div id="resp9" class="resposta-text"><strong>Resposta: E</strong> — Classe V pura sem atividade proliferativa: IECA + controle nefrótica. Imunossupressão se proteinúria nefrótica ou falha.</div>
+    </div>
+
+    <div class="caso-item" id="caso10">
+      <span style="background: #ffb703; color:#000; padding: 6px 20px; border-radius: 30px; font-weight: 800;">CASO 10</span>
+      <p style="margin:20px 0">Homem 40a, HIV+ 10a, proteinúria nefrótica 6g/dia, creat 2,2, USG rins aumentados.</p>
+      <p><strong>Diagnóstico mais provável?</strong><br>a) Nefropatia membranosa b) GESF colapsante c) Amiloidose d) GN pós-infecciosa e) Nefropatia IgA</p>
+      <button class="btn-resposta" onclick="toggleResposta('resp10')"><i class="fas fa-comment-dots"></i> Ver resposta</button>
+      <div id="resp10" class="resposta-text"><strong>Resposta: B</strong> — HIV associado a GESF colapsante (rins aumentados, proteinúria nefrótica).</div>
+    </div>
+    <p style="text-align: right; margin-top: 30px; color: #cfe6f0;"><i class="fas fa-flask"></i> Respostas comentadas • confira após raciocinar</p>
+  </div>
+</div>
+
+<script>
+  // Gráfico de cores variadas (barras)
+  window.onload = function() {
+    const ctx = document.getElementById('glomeChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Nefrítica', 'LES', 'RPG/ANCA', 'Membranosa', 'Lesão mínima', 'IgA'],
+        datasets: [{
+          label: 'Incidência em provas (%)',
+          data: [38, 30, 45, 28, 35, 42],
+          backgroundColor: [
+            '#e63946', '#3a86ff', '#ff9e00', '#8338ec', '#2a9d8f', '#fb8500'
+          ],
+          borderRadius: 10,
+          barPercentage: 0.7,
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+          legend: { display: false },
+        },
+        scales: {
+          y: { beginAtZero: true, max: 55, grid: { color: 'rgba(255,255,255,0.1)' } },
+          x: { ticks: { color: '#f0f9ff', font: { weight: 'bold' } } }
+        }
+      }
+    });
+  };
+
+  // função para mostrar resposta
+  function toggleResposta(id) {
+    var el = document.getElementById(id);
+    if (el.classList.contains('show')) {
+      el.classList.remove('show');
+    } else {
+      el.classList.add('show');
+    }
+  }
+</script>
+
+<!-- rodapé invisível só para segurança -->
+<div style="margin-top: 30px; text-align: center; opacity: 0.7; color: #1e3b4f;">
+  <i class="fas fa-brain"></i> Estratégia provas – glomerulopatias • foco em pegadinhas, tratamento oral/IV e 10 casos comentados
+</div>
+</body>
+</html>
